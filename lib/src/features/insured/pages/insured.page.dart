@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -14,14 +15,14 @@ class InsuredPage extends StatefulWidget {
 
 class _InsuredPageState extends State<InsuredPage> {
 
-  final TextEditingController _identityNumberController = TextEditingController();
-  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _birthDateController = TextEditingController();
+  final TextEditingController _documentTypeController = TextEditingController();
+  final TextEditingController _documentNumberController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _planIdController = TextEditingController();
+  final TextEditingController _codeController = TextEditingController();
 
 
   final List<Map<String, dynamic>> data = [
@@ -56,8 +57,8 @@ class _InsuredPageState extends State<InsuredPage> {
 
   // Función para hacer el request y manejar la respuesta
   Future<void> fetchData() async {
-    const url = 'http://localhost:3000/insureds';
-    
+    const url = 'http://localhost:3000/personas/alumnos';
+
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -93,27 +94,25 @@ class _InsuredPageState extends State<InsuredPage> {
         print('Error: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error al hacer el request: $e');
+      log('Error al hacer el request: $e');
     }
   }
 
   // Método para enviar los datos del formulario
   Future<void> submitForm() async {
     final Map<String, dynamic> data = {
-      "identity_number": _identityNumberController.text.toString(),
-      "first_name": _firstNameController.text,
-      "last_name": _lastNameController.text,
-      "birth_date": _birthDateController.text,
-      "phone": _phoneController.text,
-      "address": _addressController.text,
-      "plan_id": int.parse(_planIdController.text),
-      "email": _emailController.text,
-      "status": "active",
-      "start_date": "2025-02-18",
-      "end_date": "2026-02-18"
+      "nombre": _nameController.text.toString(),
+      "apellido": _lastNameController.text,
+      "tipo_documento": _documentTypeController.text,
+      "nro_documento": _documentNumberController.text,
+      "telefono": _phoneController.text,
+      "direccion": _addressController.text, 
+      "codigo_alumno": _codeController.text, 
+      "email": _emailController.text,  
+      "observaciones": "Inscrito"
     };
 
-    const String url = 'http://localhost:3000/insureds';
+    const String url = 'http://localhost:3000/personas/crear-alumno';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -152,7 +151,7 @@ class _InsuredPageState extends State<InsuredPage> {
           //   style: TextStyle(fontSize: 18),
           // ),
           // const SizedBox(height: 12),
-          const InsuredInformationWidget(),
+           InsuredInformationWidget(student: insuredsData.length.toString(),),
           const SizedBox(height: 12),
           Expanded(
             child: Card(
@@ -175,7 +174,7 @@ class _InsuredPageState extends State<InsuredPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Asegurados',
+                                'Alumnos',
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.black,
@@ -183,7 +182,7 @@ class _InsuredPageState extends State<InsuredPage> {
                                 ),
                               ),
                               Text(
-                                'Asegurados Activos',
+                                'Activos',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.green[400],
@@ -214,145 +213,147 @@ class _InsuredPageState extends State<InsuredPage> {
                                               borderRadius: BorderRadius.circular(16),
                                             ),
                                             padding: const EdgeInsets.all(16.0),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                const Text(
-                                                  'Registro del Asegurado',
-                                                  style: TextStyle(
-                                                      fontSize: 20, fontWeight: FontWeight.bold),
-                                                ),
-                                                const SizedBox(height: 20),
-                                                TextFormField(
-                                                  controller: _identityNumberController,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Numero de Identidad (CI)',
-                                                    hintText: 'Ingrese CI',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  const Text(
+                                                    'Registro de Alumno Nuevo',
+                                                    style: TextStyle(
+                                                        fontSize: 20, fontWeight: FontWeight.bold),
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                  TextFormField(
+                                                    controller: _nameController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Nombre',
+                                                      hintText: 'Ingrese su nombre',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 16),
-                                                TextFormField(
-                                                  controller: _firstNameController,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Nombres',
-                                                    hintText: 'Ingresa nombres',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                  const SizedBox(height: 16),
+                                                  TextFormField(
+                                                    controller: _lastNameController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Apellido',
+                                                      hintText: 'Ingrese su nombre',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 16),
-                                                TextFormField(
-                                                  controller: _lastNameController,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Apellidos',
-                                                    hintText: 'Ingresa apellidos',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                  const SizedBox(height: 16),
+                                                  TextFormField(
+                                                    controller: _documentTypeController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Tipo tipo documento',
+                                                      hintText: 'Ingrese Tipo de Documento',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 16),
-                                                TextFormField(
-                                                  controller: _birthDateController,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Fecha de Nacimiento',
-                                                    hintText: 'dd/mm/aaaa',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                  const SizedBox(height: 16),
+                                                  TextFormField(
+                                                    controller: _documentNumberController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Nro. Documento',
+                                                      hintText: 'Ingrese el numero de documento',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 16),
-                                                TextFormField(
-                                                  controller: _phoneController,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Telefono',
-                                                    hintText: 'Ingresa telefono',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                  const SizedBox(height: 16),
+                                                  TextFormField(
+                                                    controller: _phoneController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Telefono',
+                                                      hintText: 'Ingresa telefono',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 16),
-                                                TextFormField(
-                                                  controller: _emailController,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Correo Electronico',
-                                                    hintText: 'Ingresa email',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                  const SizedBox(height: 16),
+                                                  TextFormField(
+                                                    controller: _emailController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Correo Electronico',
+                                                      hintText: 'Ingresa email',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 16),
-                                                TextFormField(
-                                                  controller: _addressController,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Direccion',
-                                                    hintText: 'Ingresa direccion',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                  const SizedBox(height: 16),
+                                                  TextFormField(
+                                                    controller: _addressController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Direccion',
+                                                      hintText: 'Ingresa direccion',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 16),
-                                                TextFormField(
-                                                  controller: _planIdController,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Plan de seguro',
-                                                    hintText: 'Seleccione un plan',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                  const SizedBox(height: 16),
+                                                  TextFormField(
+                                                    controller: _codeController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Codigo de Alumno',
+                                                      hintText: 'Ingrese el codigo de Alumno',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 32),
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                  children: [
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        backgroundColor: Colors.white,
-                                                        padding: const EdgeInsets.symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 12,
+                                                  const SizedBox(height: 32),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    children: [
+                                                      ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.white,
+                                                          padding: const EdgeInsets.symmetric(
+                                                            horizontal: 20,
+                                                            vertical: 12,
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          'Cerrar',
+                                                          style: TextStyle(color: Colors.black),
                                                         ),
                                                       ),
-                                                      child: const Text(
-                                                        'Cerrar',
-                                                        style: TextStyle(color: Colors.black),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 16),
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context).pop();
-                                                        submitForm();
-                                                        
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        backgroundColor: const Color(0xFF5932EA),
-                                                        padding: const EdgeInsets.symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 12,
+                                                      const SizedBox(width: 16),
+                                                      ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                          submitForm();
+                                                          
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: const Color(0xFF5932EA),
+                                                          padding: const EdgeInsets.symmetric(
+                                                            horizontal: 20,
+                                                            vertical: 12,
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          'Registrar Estudiante',
+                                                          style: TextStyle(color: Colors.white),
                                                         ),
                                                       ),
-                                                      child: const Text(
-                                                        'Registrar Asegurado',
-                                                        style: TextStyle(color: Colors.white),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -385,12 +386,12 @@ class _InsuredPageState extends State<InsuredPage> {
                         child: SingleChildScrollView(
                           child: DataTable(
                             columns: const [
-                              DataColumn(label: Text('Nombre Asegurado')),
-                              DataColumn(label: Text('Plan')),
-                              DataColumn(label: Text('Celular')),
+                              DataColumn(label: Text('Nombre')),
+                              DataColumn(label: Text('Nro. Doc.')),
+                              DataColumn(label: Text('Telefono')),
                               DataColumn(label: Text('Email')),
-                              DataColumn(label: Text('Titular')),
-                              DataColumn(label: Text('Estado')),
+                              DataColumn(label: Text('Direccion')),
+                              DataColumn(label: Text('Codigo')),
                             ],
                             // rows: data
                             //     .map(
@@ -407,12 +408,12 @@ class _InsuredPageState extends State<InsuredPage> {
                             rows: insuredsData
                                 .map(
                                   (row) => DataRow(cells: [
-                                    DataCell(Text(row['person']['first_name'])),
-                                    DataCell(Text(row['plan']['name'])),
-                                    DataCell(Text(row['person']['phone'])),
+                                    DataCell(Text('${row['nombre']} ${row['apellido']}')),
+                                    DataCell(Text(row['nro_documento'])),
+                                    DataCell(Text(row['telefono'])),
                                     DataCell(Text(row['email'])),
-                                    DataCell(Text('Titular')),
-                                    DataCell(Text(row['status'])),
+                                    DataCell(Text(row['direccion'])),
+                                    DataCell(Text(row['codigo_alumno'])),
                                   ]),
                                 )
                                 .toList(),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class InsuredInformationWidget extends StatelessWidget {
+  final String student;
   const InsuredInformationWidget({
-    super.key,
+    super.key, required this.student,
   });
 
   @override
@@ -27,19 +28,19 @@ class InsuredInformationWidget extends StatelessWidget {
                 children: [
                   Image.asset('assets/user_check.png'),
                   const SizedBox(width: 4),
-                  const Column(
+                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Titulares Asegurados',
+                      const Text(
+                        'Alumnos Registrados',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black54,
                         ),
                       ),
                       Text(
-                        '1,013',
-                        style: TextStyle(
+                        student,
+                        style:const TextStyle(
                           fontSize: 16,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -61,14 +62,14 @@ class InsuredInformationWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Dependientes Asegurados',
+                        'Alumnos Inscritos',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black54,
                         ),
                       ),
                       Text(
-                        '605',
+                        '0',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,

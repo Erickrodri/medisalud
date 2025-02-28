@@ -21,7 +21,7 @@ class SideMenu extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Image.asset('assets/logo_ms.jpg'),
+            child: Image.asset('assets/logo.png'),
           ),
           MenuItemWidget(
             index: 0,
@@ -33,14 +33,14 @@ class SideMenu extends StatelessWidget {
           MenuItemWidget(
             index: 1,
             icon: Icons.account_balance_wallet,
-            title: 'Planes',
+            title: 'Inscripciones',
             selectedIndex: selectedIndex,
             onItemSelected: onItemSelected,
           ),
           MenuItemWidget(
             index: 2,
             icon: Icons.people,
-            title: 'Asegurado',
+            title: 'Alumnos',
             selectedIndex: selectedIndex,
             onItemSelected: onItemSelected,
           ),
@@ -54,7 +54,7 @@ class SideMenu extends StatelessWidget {
           MenuItemWidget(
             index: 4,
             icon: Icons.perm_contact_calendar,
-            title: 'Prestadores',
+            title: 'Modulos',
             selectedIndex: selectedIndex,
             onItemSelected: onItemSelected,
           ),
