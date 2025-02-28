@@ -114,7 +114,6 @@ class _InsuredPageState extends State<InsuredPage> {
     };
 
     const String url = 'http://localhost:3000/insureds';
-    print(data);
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -138,11 +137,7 @@ class _InsuredPageState extends State<InsuredPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    
-
     fetchData();
-
   }
 
   @override
@@ -152,11 +147,11 @@ class _InsuredPageState extends State<InsuredPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Hola Erick',
-            style: TextStyle(fontSize: 18),
-          ),
-          const SizedBox(height: 12),
+          // const Text(
+          //   'Hola Erick',
+          //   style: TextStyle(fontSize: 18),
+          // ),
+          // const SizedBox(height: 12),
           const InsuredInformationWidget(),
           const SizedBox(height: 12),
           Expanded(
