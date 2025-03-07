@@ -37,13 +37,6 @@ class SideMenu extends StatelessWidget {
             selectedIndex: selectedIndex,
             onItemSelected: onItemSelected,
           ),
-          MenuItemWidget(
-            index: 2,
-            icon: Icons.card_travel_rounded,
-            title: 'Test',
-            selectedIndex: selectedIndex,
-            onItemSelected: onItemSelected,
-          ),
         ],
       ),
     );
