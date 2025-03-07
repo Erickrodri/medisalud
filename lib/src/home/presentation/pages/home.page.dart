@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:medisalud/src/features/insured/pages/compras.page.dart';
+import 'package:medisalud/src/features/insured/pages/importaciones.page.dart';
 import 'package:medisalud/src/features/insured/pages/insured.page.dart';
 
 import '../../../shared/building.page.dart';
@@ -12,15 +14,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
   final List _content = <Widget>[
-    BuildingPage(),
-    BuildingPage(),
-    InsuredPage(),
-    BuildingPage(),
-    BuildingPage(),
-    BuildingPage(),
-    BuildingPage(),
+    ComprasPage(),
+    ImportacionesPage()
   ];
 
   void _updateContent(int index) {
