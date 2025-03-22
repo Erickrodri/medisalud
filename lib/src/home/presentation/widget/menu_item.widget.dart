@@ -27,7 +27,7 @@ class MenuItemWidget extends StatelessWidget {
         vertical: 6,
       ),
       decoration: BoxDecoration(
-        color: isSelected ? Color(0xFF5932EA) : Colors.white,
+        color: isSelected ? Color.fromARGB(255, 8, 150, 84) : Colors.white,
         borderRadius: BorderRadius.circular(14),
       ),
       child: ListTile(

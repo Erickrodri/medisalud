@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medisalud/src/features/insured/pages/compras.page.dart';
-import 'package:medisalud/src/features/insured/pages/importaciones.page.dart';
-import 'package:medisalud/src/features/insured/pages/insured.page.dart';
-
-import '../../../shared/building.page.dart';
+import 'package:medisalud/src/features/insured/pages/facturas.page.dart';
+import 'package:medisalud/src/features/insured/pages/notificaciones.page.dart';
+import 'package:medisalud/src/features/insured/pages/pedidos.page.dart';
 import '../widget/side_menu.widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,8 +14,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final List _content = <Widget>[
-    ComprasPage(),
-    ImportacionesPage()
+    PedidosPage(),
+    NotificacionesPage(),
+    FacturaPage(),
   ];
 
   void _updateContent(int index) {

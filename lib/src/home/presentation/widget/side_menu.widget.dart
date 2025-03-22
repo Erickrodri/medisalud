@@ -21,19 +21,26 @@ class SideMenu extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Image.asset('assets/medelec.png'),
+            child: Image.asset('assets/images.jpg'),
           ),
           MenuItemWidget(
             index: 0,
-            icon: Icons.local_offer,
-            title: 'Compras',
+            icon: Icons.view_in_ar_outlined,
+            title: 'Pedidos',
             selectedIndex: selectedIndex,
             onItemSelected: onItemSelected,
           ),
           MenuItemWidget(
             index: 1,
-            icon: Icons.card_travel_rounded,
-            title: 'Importaciones',
+            icon: Icons.notifications_active,
+            title: 'Notificaciones',
+            selectedIndex: selectedIndex,
+            onItemSelected: onItemSelected,
+          ),
+          MenuItemWidget(
+            index: 2,
+            icon: Icons.edit_document,
+            title: 'Facturas',
             selectedIndex: selectedIndex,
             onItemSelected: onItemSelected,
           ),
