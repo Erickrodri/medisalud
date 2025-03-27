@@ -203,186 +203,231 @@ class _PedidosPageState extends State<PedidosPage> {
     );
   }
 
-  void mostrarFormularioPedido(BuildContext context) {
-    final TextEditingController numeroPedidoController =
-        TextEditingController(text: '1010');
-    final TextEditingController fechaHoraController =
-        TextEditingController(text: DateTime.now().toIso8601String());
-    final TextEditingController totalController =
-        TextEditingController(text: '60.00');
-    final TextEditingController mesaNumeroController =
-        TextEditingController(text: '2');
-    final TextEditingController usuarioIdController =
-        TextEditingController(text: '4');
+void mostrarFormularioPedido(BuildContext context) {
+  final TextEditingController numeroPedidoController =
+      TextEditingController(text: '1010');
+  final TextEditingController totalController =
+      TextEditingController(text: '0.00');
+  final TextEditingController mesaNumeroController =
+      TextEditingController(text: '2');
+  final TextEditingController usuarioIdController =
+      TextEditingController(text: '4');
 
-    String estadoSeleccionado = 'entregado';
-    bool paraLlevar = false;
+  String estadoSeleccionado = 'entregado';
+  bool paraLlevar = false;
+  DateTime fechaHora = DateTime.now();
+  List<Map<String, dynamic>> productos = [
+  {"id": 1, "nombre": "Hamburguesa Clásica", "precio": "25.50"},
+  {"id": 2, "nombre": "Papas Fritas", "precio": "10.00"},
+  {"id": 3, "nombre": "Refresco", "precio": "5.50"},
+];
+  List<int> productosSeleccionados = [];
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 2,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            const Text(
-                              'Registrar Pedido',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              controller: numeroPedidoController,
-                              decoration: InputDecoration(
-                                labelText: 'Número de Pedido',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: 16),
-                            DropdownButtonFormField<String>(
-                              value: estadoSeleccionado,
-                              items:
-                                  ['pendiente', 'en preparación', 'entregado']
-                                      .map((estado) => DropdownMenuItem(
-                                            value: estado,
-                                            child: Text(estado),
-                                          ))
-                                      .toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  estadoSeleccionado = value!;
-                                });
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Estado',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
+  void calcularTotal(StateSetter setState) {
+    double total = 0.0;
+    for (var id in productosSeleccionados) {
+      var producto = productos.firstWhere((p) => p['id'] == id);
+      total += double.tryParse(producto['precio']) ?? 0.0;
+    }
+
+    setState(() {
+      totalController.text = total.toStringAsFixed(2);
+    });
+  }
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width / 2,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.all(16.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const Text(
+                            'Registrar Pedido',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 20),
+                          TextFormField(
+                            controller: numeroPedidoController,
+                            decoration: InputDecoration(
+                              labelText: 'Número de Pedido',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            SwitchListTile(
-                              title: const Text('¿Para llevar?'),
-                              value: paraLlevar,
-                              onChanged: (value) {
-                                setState(() {
-                                  paraLlevar = value;
-                                });
-                              },
+                            keyboardType: TextInputType.number,
+                          ),
+                          const SizedBox(height: 16),
+                          DropdownButtonFormField<String>(
+                            value: estadoSeleccionado,
+                            items: ['pendiente', 'en preparación', 'entregado']
+                                .map((estado) => DropdownMenuItem(
+                                      value: estado,
+                                      child: Text(estado),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                estadoSeleccionado = value!;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              labelText: 'Estado',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: totalController,
-                              decoration: InputDecoration(
-                                labelText: 'Total',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                          ),
+                          const SizedBox(height: 16),
+                          SwitchListTile(
+                            title: const Text('¿Para llevar?'),
+                            value: paraLlevar,
+                            onChanged: (value) {
+                              setState(() {
+                                paraLlevar = value;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          /// 🟣 Lista de productos
+                          const Text("Selecciona productos:",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Column(
+                            children: productos.map((producto) {
+                              return CheckboxListTile(
+                                title: Text("${producto["nombre"]} - \$${producto["precio"]}"),
+                                value:
+                                    productosSeleccionados.contains(producto["id"]),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (value == true) {
+                                      productosSeleccionados.add(producto["id"]);
+                                    } else {
+                                      productosSeleccionados.remove(producto["id"]);
+                                    }
+                                    calcularTotal(setState);
+                                  });
+                                },
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 16),
+
+                          /// Total
+                          TextFormField(
+                            controller: totalController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: 'Total',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          TextFormField(
+                            controller: mesaNumeroController,
+                            decoration: InputDecoration(
+                              labelText: 'Número de Mesa',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                          const SizedBox(height: 16),
+
+                          TextFormField(
+                            controller: usuarioIdController,
+                            decoration: InputDecoration(
+                              labelText: 'ID de Usuario',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                          const SizedBox(height: 32),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 12),
+                                ),
+                                child: const Text(
+                                  'Cancelar',
+                                  style: TextStyle(color: Colors.black),
                                 ),
                               ),
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
-                            ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: mesaNumeroController,
-                              decoration: InputDecoration(
-                                labelText: 'Número de Mesa',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                              const SizedBox(width: 16),
+                              ElevatedButton(
+                                onPressed: () {
+                                  registrarPedidoAdaptado(
+                                    numeroPedido: int.parse(
+                                        numeroPedidoController.text),
+                                    fechaHora: DateTime.now().toIso8601String(),
+                                    estado: estadoSeleccionado,
+                                    paraLlevar: paraLlevar,
+                                    total:
+                                        double.parse(totalController.text),
+                                    mesaNumero: int.parse(
+                                        mesaNumeroController.text),
+                                    usuarioId: int.parse(
+                                        usuarioIdController.text),
+                                  );
+
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF5932EA),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 12),
+                                ),
+                                child: const Text(
+                                  'Registrar Pedido',
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: usuarioIdController,
-                              decoration: InputDecoration(
-                                labelText: 'ID de Usuario',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: 32),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 12),
-                                  ),
-                                  child: const Text(
-                                    'Cancelar',
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    
-                                    // 👉 Aquí llamas a tu función que inserta el pedido
-                                    registrarPedidoAdaptado(
-                                      numeroPedido: int.parse(
-                                          numeroPedidoController.text),
-                                          fechaHora: DateTime.now().toIso8601String(),
-                                          estado: estado,
-                                          paraLlevar: paraLlevar,
-                                          total: double.parse(totalController.text),
-                                          mesaNumero: int.parse(mesaNumeroController.text),
-                                          usuarioId: 1,
-                                    );
-                                    Navigator.of(context).pop();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF5932EA),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 12),
-                                  ),
-                                  child: const Text(
-                                    'Registrar Pedido',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 }
