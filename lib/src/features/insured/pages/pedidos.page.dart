@@ -56,8 +56,10 @@ class _PedidosPageState extends State<PedidosPage> {
     required bool paraLlevar,
     required double total,
     required int mesaNumero,
+    List<Map<String, dynamic>>? productos,
   }) async {
     // Construir el JSON del pedido
+    print(productos);
     final Map<String, dynamic> data = {
       "numero_pedido": generarCodigoPedido(),
       "fecha_hora": fechaHora,
@@ -237,17 +239,26 @@ class _PedidosPageState extends State<PedidosPage> {
     bool paraLlevar = false;
     DateTime fechaHora = DateTime.now();
     List<Map<String, dynamic>> productos = [
-      {"id": 1, "nombre": "Hamburguesa Clásica", "precio": "25.50"},
-      {"id": 2, "nombre": "Papas Fritas", "precio": "10.00"},
-      {"id": 3, "nombre": "Refresco", "precio": "5.50"},
+      {
+        "id": 1,
+        "nombre": "Hamburguesa Clásica",
+        "precio": "25.50",
+        "cantidad": 0
+      },
+      {"id": 2, "nombre": "Papas Fritas", "precio": "10.00", "cantidad": 0},
+      {"id": 3, "nombre": "Refresco", "precio": "5.50", "cantidad": 0},
     ];
-    List<int> productosSeleccionados = [];
+
+    // Variable para verificar si hay productos seleccionados
+    bool hayProductosSeleccionados() {
+      return productos.any((producto) => producto['cantidad'] > 0);
+    }
 
     void calcularTotal(StateSetter setState) {
       double total = 0.0;
-      for (var id in productosSeleccionados) {
-        var producto = productos.firstWhere((p) => p['id'] == id);
-        total += double.tryParse(producto['precio']) ?? 0.0;
+      for (var producto in productos) {
+        total += (double.tryParse(producto['precio']) ?? 0.0) *
+            (producto['cantidad'] as int);
       }
 
       setState(() {
@@ -260,6 +271,9 @@ class _PedidosPageState extends State<PedidosPage> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
+            // Verificar si hay productos seleccionados para habilitar/deshabilitar el botón
+            final bool tieneProductos = hayProductosSeleccionados();
+
             return Dialog(
               backgroundColor: Colors.transparent,
               child: Stack(
@@ -286,28 +300,43 @@ class _PedidosPageState extends State<PedidosPage> {
                             ),
                             const SizedBox(height: 16),
 
-                            /// 🟣 Lista de productos
+                            /// 🟣 Lista de productos con contador
                             const Text("Selecciona productos:",
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             Column(
                               children: productos.map((producto) {
-                                return CheckboxListTile(
+                                return ListTile(
                                   title: Text(
                                       "${producto["nombre"]} - \Bs. ${producto["precio"]}"),
-                                  value: productosSeleccionados
-                                      .contains(producto["id"]),
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      if (value == true) {
-                                        productosSeleccionados
-                                            .add(producto["id"]);
-                                      } else {
-                                        productosSeleccionados
-                                            .remove(producto["id"]);
-                                      }
-                                      calcularTotal(setState);
-                                    });
-                                  },
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(Icons.remove),
+                                        onPressed: producto['cantidad'] > 0
+                                            ? () {
+                                                setState(() {
+                                                  producto['cantidad']--;
+                                                  calcularTotal(setState);
+                                                });
+                                              }
+                                            : null,
+                                      ),
+                                      Text(
+                                        producto['cantidad'].toString(),
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.add),
+                                        onPressed: () {
+                                          setState(() {
+                                            producto['cantidad']++;
+                                            calcularTotal(setState);
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               }).toList(),
                             ),
@@ -404,22 +433,51 @@ class _PedidosPageState extends State<PedidosPage> {
                                 ),
                                 const SizedBox(width: 16),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    registrarPedidoAdaptado(
-                                        fechaHora:
-                                            DateTime.now().toIso8601String(),
-                                        estado: estadoSeleccionado,
-                                        paraLlevar: paraLlevar,
-                                        total:
-                                            double.parse(totalController.text),
-                                        mesaNumero: int.parse(
-                                            _mesaSeleccionada.toString()));
+                                  onPressed: tieneProductos
+                                      ? () {
+                                          // Solo ejecutar si hay productos seleccionados
+                                          final productosParaPedido = productos
+                                              .where((p) => p['cantidad'] > 0)
+                                              .map((p) => {
+                                                    "id": p['id'],
+                                                    "cantidad": p['cantidad'],
+                                                    "precio": p['precio'],
+                                                    "nombre": p['nombre']
+                                                  })
+                                              .toList();
 
-                                    Navigator.of(context).pop();
-                                  },
+                                          if (_mesaSeleccionada == null) {
+                                            // Mostrar mensaje de error si no se seleccionó mesa
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    'Por favor selecciona una mesa'),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          registrarPedidoAdaptado(
+                                              fechaHora: DateTime.now()
+                                                  .toIso8601String(),
+                                              estado: estadoSeleccionado,
+                                              paraLlevar: paraLlevar,
+                                              total: double.parse(
+                                                  totalController.text),
+                                              mesaNumero: int.parse(
+                                                  _mesaSeleccionada.toString()),
+                                              productos: productosParaPedido);
+
+                                          Navigator.of(context).pop();
+                                        }
+                                      : null, // Deshabilitar si no hay productos
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor:
                                         Color.fromARGB(255, 8, 150, 84),
+                                    disabledBackgroundColor: Colors
+                                        .grey, // Color cuando está deshabilitado
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 12),
                                   ),
@@ -430,6 +488,16 @@ class _PedidosPageState extends State<PedidosPage> {
                                 ),
                               ],
                             ),
+                            // Mensaje de advertencia si no hay productos seleccionados
+                            if (!tieneProductos)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  'Debe seleccionar al menos un producto',
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 12),
+                                ),
+                              ),
                           ],
                         ),
                       ),

@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Web Sidebar',
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
-      home: HomePage(),
+      home: LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
