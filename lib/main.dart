@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'src/home/presentation/pages/home.page.dart';
+import 'package:medisalud/src/features/insured/pages/login.page.dart';
+import 'package:medisalud/src/home/presentation/pages/home.page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Web Sidebar',
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
-      home: const HomePage(),
+      home: HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }
